@@ -2,95 +2,57 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Character Battle Simulator — dark/orange theme */
+    --background: 0 0% 2%;
+    --foreground: 0 0% 96%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 96%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 96%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 22 100% 55%;
+    --primary-foreground: 0 0% 2%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --primary-strong: 28 100% 64%;
+    --primary-soft: 22 100% 55% / 0.18;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --secondary: 0 0% 9%;
+    --secondary-foreground: 0 0% 60%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 60%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --accent: 22 100% 55%;
+    --accent-foreground: 0 0% 2%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --destructive: 0 100% 64%;
+    --destructive-foreground: 0 0% 98%;
 
-    --radius: 0.5rem;
+    --winner: 138 65% 51%;
 
-    --sidebar-background: 0 0% 98%;
+    --border: 0 0% 16%;
+    --input: 0 0% 16%;
+    --ring: 28 100% 64%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --radius: 14px;
 
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 0 0% 5%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 22 100% 55%;
+    --sidebar-primary-foreground: 0 0% 2%;
+    --sidebar-accent: 0 0% 10%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 0 0% 16%;
+    --sidebar-ring: 28 100% 64%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 0 0% 2%;
+    --foreground: 0 0% 96%;
   }
 }
 
@@ -98,8 +60,123 @@ All colors MUST be HSL.
   * {
     @apply border-border;
   }
-
+  html, body, #root {
+    height: 100%;
+  }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background: radial-gradient(circle at top, hsl(0 0% 9%) 0%, hsl(0 0% 2%) 52%, hsl(0 0% 0%) 100%);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
 }
+
+@layer components {
+  .cbs-card {
+    background: linear-gradient(145deg, hsl(0 0% 8%), hsl(0 0% 5%));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.65);
+    @apply flex flex-col overflow-hidden;
+  }
+  .cbs-card-header {
+    padding: 10px 14px;
+    font-size: 18px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: hsl(var(--primary-strong));
+    border-bottom: 1px solid hsl(0 0% 15%);
+    background: radial-gradient(circle at top left, hsl(28 40% 12%) 0%, hsl(0 0% 7%) 55%);
+    @apply flex items-center justify-between gap-2.5;
+  }
+  .cbs-input {
+    background: hsl(0 0% 6%);
+    border: 1px solid hsl(0 0% 15%);
+    color: hsl(var(--foreground));
+    border-radius: 8px;
+    padding: 7px 9px;
+    font-size: 18px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s, transform 0.06s;
+    width: 100%;
+  }
+  .cbs-input:focus {
+    border-color: hsl(var(--primary-strong));
+    box-shadow: 0 0 0 1px hsl(var(--primary-soft));
+    background: hsl(0 0% 7.5%);
+    transform: translateY(-0.5px);
+  }
+  .cbs-label {
+    font-size: 17px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: hsl(var(--muted-foreground));
+  }
+  .cbs-btn {
+    border: none;
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    min-height: 32px;
+    @apply inline-flex items-center justify-center gap-1.5 whitespace-nowrap transition-all;
+  }
+  .cbs-btn-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-strong)));
+    color: hsl(var(--primary-foreground));
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.2);
+  }
+  .cbs-btn-primary:disabled {
+    opacity: 0.5;
+    cursor: default;
+    box-shadow: none;
+  }
+  .cbs-btn-primary:not(:disabled):active {
+    transform: translateY(1px) scale(0.98);
+  }
+  .cbs-btn-secondary {
+    background: hsl(0 0% 9%);
+    color: hsl(var(--muted-foreground));
+    border: 1px solid hsl(0 0% 20%);
+  }
+  .cbs-btn-secondary:hover {
+    background: hsl(0 0% 12.5%);
+    color: hsl(var(--foreground));
+  }
+  .cbs-btn-accent {
+    background: transparent;
+    color: hsl(var(--primary-strong));
+    border: 1px solid hsl(var(--primary-soft));
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+  }
+  .cbs-btn-accent:disabled {
+    opacity: 0.35;
+    cursor: default;
+    border-color: hsl(0 0% 20%);
+    color: hsl(0 0% 40%);
+  }
+  .cbs-btn-accent:not(:disabled):hover {
+    background: hsl(var(--primary-soft));
+  }
+  .cbs-btn-icon {
+    padding-inline: 10px;
+    min-height: 28px;
+    font-size: 12px;
+  }
+  .cbs-scroll::-webkit-scrollbar { width: 6px; }
+  .cbs-scroll::-webkit-scrollbar-track { background: hsl(0 0% 7%); }
+  .cbs-scroll::-webkit-scrollbar-thumb { background: hsl(0 0% 20%); border-radius: 999px; }
+}
+
+@keyframes cbs-pulse {
+  from { opacity: 0.25; transform: translateY(0); }
+  to { opacity: 1; transform: translateY(-1px); }
+}
+.cbs-loading-dot {
+  display: inline-block;
+  margin-left: 3px;
+  animation: cbs-pulse 0.9s ease-in-out infinite alternate;
+}
+.cbs-loading-dot:nth-child(2) { animation-delay: 0.15s; }
+.cbs-loading-dot:nth-child(3) { animation-delay: 0.3s; }
