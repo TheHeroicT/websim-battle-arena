@@ -30,7 +30,7 @@ Rules:
 - Length: 3-8 paragraphs, 2-5 sentences each.
 - Write directly to the reader, but do not break the fourth wall beyond normal explanation tone.`;
 
-const GEMINI_MODEL = "gemini-2.5-flash";
+const GEMINI_MODEL = "Gemini 3.1 Flash Lite";
 
 serve(async (req) => {
   if (req.method === "OPTIONS")
