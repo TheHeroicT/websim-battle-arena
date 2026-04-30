@@ -30,6 +30,8 @@ Rules:
 - Length: 3-8 paragraphs, 2-5 sentences each.
 - Write directly to the reader, but do not break the fourth wall beyond normal explanation tone.`;
 
+const GEMINI_MODEL = "gemini-2.0-flash";
+
 serve(async (req) => {
   if (req.method === "OPTIONS")
     return new Response(null, { headers: corsHeaders });
@@ -37,13 +39,15 @@ serve(async (req) => {
   try {
     const body = await req.json();
     const { mode } = body;
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
+    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+    if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY not configured");
 
-    let messages;
+    let systemInstruction = "";
+    let userPrompt = "";
     if (mode === "battle") {
       const { a, b, extraContext } = body;
-      const userPrompt =
+      systemInstruction = BATTLE_SYSTEM;
+      userPrompt =
         `Simulate a battle between these two characters.\n\n` +
         `Character A: ${a.name}\nDescription A:\n${a.description}\n\n` +
         `Character B: ${b.name}\nDescription B:\n${b.description}\n\n` +
@@ -51,23 +55,16 @@ serve(async (req) => {
           ? `Additional context and instructions for this specific battle:\n${extraContext}\n\n`
           : "") +
         `They have been pulled into a ruthless tournament run by an enigmatic figure known only as "The Game Master." In this arena, they are compelled to fight to the death regardless of their personal relationship, history, or morals. Decide who would most plausibly win, based on their abilities, mindset, and how the fight unfolds. Make sure the ending feels decisive, earned, and leaves no doubt that only one of them walks away alive.`;
-      messages = [
-        { role: "system", content: BATTLE_SYSTEM },
-        { role: "user", content: userPrompt },
-      ];
     } else if (mode === "explain") {
       const { a, b, story, winnerName } = body;
-      const userPrompt =
+      systemInstruction = EXPLAIN_SYSTEM;
+      userPrompt =
         `You previously narrated a battle.\n\n` +
         `Character A: ${a.name}\nDescription A:\n${a.description}\n\n` +
         `Character B: ${b.name}\nDescription B:\n${b.description}\n\n` +
         `Winner: ${winnerName || "Unknown"}\n\n` +
         `Battle story:\n${story}\n\n` +
         `Explain the logic behind how the fight played out and why this winner makes sense.`;
-      messages = [
-        { role: "system", content: EXPLAIN_SYSTEM },
-        { role: "user", content: userPrompt },
-      ];
     } else {
       return new Response(JSON.stringify({ error: "Invalid mode" }), {
         status: 400,
@@ -75,42 +72,35 @@ serve(async (req) => {
       });
     }
 
-    const resp = await fetch(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "google/gemini-3-flash-preview",
-          messages,
-        }),
-      }
-    );
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+
+    const resp = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: systemInstruction }] },
+        contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+      }),
+    });
 
     if (!resp.ok) {
+      const t = await resp.text();
+      console.error("Gemini API error", resp.status, t);
       if (resp.status === 429)
         return new Response(
           JSON.stringify({ error: "Rate limits exceeded, please try again later." }),
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
-      if (resp.status === 402)
-        return new Response(
-          JSON.stringify({ error: "Payment required, please add credits to your Lovable AI workspace." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      const t = await resp.text();
-      console.error("AI gateway error", resp.status, t);
-      return new Response(JSON.stringify({ error: "AI gateway error" }), {
+      return new Response(JSON.stringify({ error: "Gemini API error", details: t }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     const data = await resp.json();
-    const content = data.choices?.[0]?.message?.content || "";
+    const content =
+      data.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text || "").join("") ||
+      "";
     return new Response(JSON.stringify({ content }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
