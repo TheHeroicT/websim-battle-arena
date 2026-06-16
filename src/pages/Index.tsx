@@ -11,6 +11,7 @@ type Character = {
 };
 
 const STORAGE_KEY = "cbs_characters_v1";
+const GEN_STORAGE_KEY = "cbs_generation_v1";
 
 const newId = () =>
   `c_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -49,12 +50,39 @@ const Index = () => {
     } catch {
       /* ignore */
     }
+    try {
+      const rawGen = localStorage.getItem(GEN_STORAGE_KEY);
+      if (rawGen) {
+        const g = JSON.parse(rawGen);
+        if (g && typeof g === "object") {
+          if (typeof g.story === "string") setStory(g.story);
+          if (typeof g.winnerName === "string") setWinnerName(g.winnerName);
+          if (typeof g.explanation === "string") setExplanation(g.explanation);
+          if (typeof g.battleContext === "string") setBattleContext(g.battleContext);
+          if (Array.isArray(g.selectedIds)) setSelectedIds(g.selectedIds.slice(0, 2));
+        }
+      }
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   // Persist
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(characters));
   }, [characters]);
+
+  // Persist generation
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        GEN_STORAGE_KEY,
+        JSON.stringify({ story, winnerName, explanation, battleContext, selectedIds })
+      );
+    } catch {
+      /* ignore */
+    }
+  }, [story, winnerName, explanation, battleContext, selectedIds]);
 
   const sorted = useMemo(
     () => [...characters].sort((a, b) => a.name.localeCompare(b.name)),
